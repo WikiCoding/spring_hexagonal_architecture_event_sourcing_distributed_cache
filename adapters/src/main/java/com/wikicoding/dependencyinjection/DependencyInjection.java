@@ -9,7 +9,7 @@ import com.wikicoding.application.usecases.match.ResultMatchEventHandler;
 import com.wikicoding.core.domain.match.MatchFactory;
 import com.wikicoding.core.domain.team.TeamFactory;
 import com.wikicoding.core.ports.outbound.EventStoreRepository;
-import com.wikicoding.outbound.persistence.cache.RedisCache;
+import com.wikicoding.outbound.persistence.cache.CacheService;
 import com.wikicoding.outbound.persistence.database.EventStore;
 import com.wikicoding.outbound.persistence.database.StoreImpl;
 import org.springframework.context.annotation.Bean;
@@ -26,8 +26,8 @@ public class DependencyInjection {
     public TeamFactory teamFactory() { return new TeamFactory(); }
 
     @Bean
-    public EventStoreRepository eventStoreRepository(EventStore eventStore, RedisCache redisCache) {
-        return new StoreImpl(redisCache, eventStore);
+    public EventStoreRepository eventStoreRepository(EventStore eventStore, CacheService cacheService) {
+        return new StoreImpl(cacheService, eventStore);
     }
 
     @Bean

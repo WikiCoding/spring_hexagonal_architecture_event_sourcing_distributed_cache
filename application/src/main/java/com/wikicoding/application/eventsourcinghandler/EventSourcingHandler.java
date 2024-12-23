@@ -23,10 +23,10 @@ public class EventSourcingHandler {
         this.eventStoreRepository = eventStoreRepository;
     }
 
-    public AggregateRoot getByAggregateId(String aggregateId) {
-        List<BaseDomainEvent> events = eventStoreRepository.findByAggregateId(aggregateId);
+    public AggregateRoot getByAggregateId(String aggregateId, String eventType) {
+        List<BaseDomainEvent> events = eventStoreRepository.findByAggregateId(aggregateId, eventType);
 
-        if (events.get(0) instanceof TeamCreatedEvent) {
+        if (eventType.equals("TEAM")) {
             Team team = teamFactory.createNoArgsTeamAggregate();
             team.rebuildState(events);
 

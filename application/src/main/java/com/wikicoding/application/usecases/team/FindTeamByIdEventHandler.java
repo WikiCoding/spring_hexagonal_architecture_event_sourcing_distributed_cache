@@ -17,7 +17,7 @@ public class FindTeamByIdEventHandler implements FindTeamById {
 
     @Override
     public TeamDto handle(FindTeamByIdQuery query) {
-        Team team = (Team) eventSourcingHandler.getByAggregateId(query.getTeamId());
+        Team team = (Team) eventSourcingHandler.getByAggregateId(query.getTeamId(), "TEAM");
 
         return new TeamDto(team.getTeamName(), team.getVersion(), LocalDateTime.now());
     }

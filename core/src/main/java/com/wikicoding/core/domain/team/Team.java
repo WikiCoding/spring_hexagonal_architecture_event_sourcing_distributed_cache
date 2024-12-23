@@ -51,6 +51,7 @@ public class Team implements AggregateRoot {
         for (BaseDomainEvent event : events) {
             if (event instanceof TeamCreatedEvent teamCreatedEvent) {
                 teamName = teamCreatedEvent.getTeamName();
+                version = teamCreatedEvent.getVersion();
             }
         }
     }

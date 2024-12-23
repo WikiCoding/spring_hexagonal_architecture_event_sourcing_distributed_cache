@@ -18,7 +18,7 @@ public class ResultMatchEventHandler implements ResultMatch {
 
     @Override
     public MatchDto handle(ResultMatchCommand command) {
-        Match match = (Match) eventSourcingHandler.getByAggregateId(command.getMatchId());
+        Match match = (Match) eventSourcingHandler.getByAggregateId(command.getMatchId(), "MATCH_RESULTED_EVENT");
 
         match.updateScore(command.getMatchScore());
 

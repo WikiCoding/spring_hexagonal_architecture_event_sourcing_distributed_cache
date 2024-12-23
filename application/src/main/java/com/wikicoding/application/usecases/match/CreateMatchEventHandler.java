@@ -21,8 +21,8 @@ public class CreateMatchEventHandler implements CreateMatch {
     @Override
     public MatchDto handle(CreateMatchCommand command) {
         // check if teamA and teamB exist, throws runtime exception if it doesn't exist
-        eventSourcingHandler.getByAggregateId(command.getTeamA());
-        eventSourcingHandler.getByAggregateId(command.getTeamB());
+        eventSourcingHandler.getByAggregateId(command.getTeamA(), "MATCH_CREATED_EVENT");
+        eventSourcingHandler.getByAggregateId(command.getTeamB(), "MATCH_CREATED_EVENT");
 
         // Create the aggregate
         Match match = matchFactory.createMatchAggregate(command);

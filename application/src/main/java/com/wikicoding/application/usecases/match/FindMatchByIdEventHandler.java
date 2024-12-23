@@ -17,7 +17,7 @@ public class FindMatchByIdEventHandler implements FindMatchById {
 
     @Override
     public MatchDto handle(FindMatchByIdQuery query) {
-        Match match = (Match) eventSourcingHandler.getByAggregateId(query.getMatchId());
+        Match match = (Match) eventSourcingHandler.getByAggregateId(query.getMatchId(), "MATCH");
 
         return new MatchDto(match.getMatchId(), match.getMatchName(), match.getTeamA(), match.getTeamB(),
                 match.getMatchScore(), LocalDateTime.now(), match.getVersion());

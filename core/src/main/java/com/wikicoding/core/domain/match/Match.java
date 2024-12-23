@@ -91,11 +91,13 @@ public class Match implements AggregateRoot {
                 matchName = matchCreatedEvent.getMatchName();
                 teamA = matchCreatedEvent.getTeamA();
                 teamB = matchCreatedEvent.getTeamB();
+                matchScore = matchCreatedEvent.getMatchScore();
+                version = event.getVersion();
             }
 
             if (event instanceof MatchResultedEvent matchResultedEvent) {
                 matchScore = matchResultedEvent.getMatchScore();
-                version++;
+                version = event.getVersion();
             }
         }
     }
