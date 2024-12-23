@@ -1,6 +1,6 @@
 package com.wikicoding.outbound.persistence.datamodels;
 
-import com.wikicoding.core.domainevents.BaseDomainEvent;
+import com.wikicoding.core.domain.events.BaseDomainEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

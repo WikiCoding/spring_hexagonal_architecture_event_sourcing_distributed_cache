@@ -2,9 +2,9 @@ package com.wikicoding.core.domain.match;
 
 import com.wikicoding.common.commands.CreateMatchCommand;
 import com.wikicoding.core.domain.abstractions.AggregateRoot;
-import com.wikicoding.core.domainevents.BaseDomainEvent;
-import com.wikicoding.core.domainevents.MatchCreatedEvent;
-import com.wikicoding.core.domainevents.MatchResultedEvent;
+import com.wikicoding.core.domain.events.BaseDomainEvent;
+import com.wikicoding.core.domain.events.MatchCreatedEvent;
+import com.wikicoding.core.domain.events.MatchResultedEvent;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

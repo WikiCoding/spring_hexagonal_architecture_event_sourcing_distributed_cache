@@ -5,8 +5,7 @@ import com.wikicoding.core.domain.match.Match;
 import com.wikicoding.core.domain.match.MatchFactory;
 import com.wikicoding.core.domain.team.Team;
 import com.wikicoding.core.domain.team.TeamFactory;
-import com.wikicoding.core.domainevents.BaseDomainEvent;
-import com.wikicoding.core.domainevents.TeamCreatedEvent;
+import com.wikicoding.core.domain.events.BaseDomainEvent;
 import com.wikicoding.core.ports.outbound.EventStoreRepository;
 
 import java.util.List;

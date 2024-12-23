@@ -1,9 +1,9 @@
 package com.wikicoding.outbound.persistence.cache;
 
-import com.wikicoding.core.domainevents.BaseDomainEvent;
-import com.wikicoding.core.domainevents.MatchCreatedEvent;
-import com.wikicoding.core.domainevents.MatchResultedEvent;
-import com.wikicoding.core.domainevents.TeamCreatedEvent;
+import com.wikicoding.core.domain.events.BaseDomainEvent;
+import com.wikicoding.core.domain.events.MatchCreatedEvent;
+import com.wikicoding.core.domain.events.MatchResultedEvent;
+import com.wikicoding.core.domain.events.TeamCreatedEvent;
 import com.wikicoding.outbound.persistence.datamodels.EventDataModel;
 import com.wikicoding.outbound.persistence.datamodels.MatchDataModel;
 import com.wikicoding.outbound.persistence.datamodels.TeamDataModel;

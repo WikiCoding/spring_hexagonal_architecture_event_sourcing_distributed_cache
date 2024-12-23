@@ -1,6 +1,6 @@
 package com.wikicoding.core.ports.outbound;
 
-import com.wikicoding.core.domainevents.BaseDomainEvent;
+import com.wikicoding.core.domain.events.BaseDomainEvent;
 
 import java.util.List;
 

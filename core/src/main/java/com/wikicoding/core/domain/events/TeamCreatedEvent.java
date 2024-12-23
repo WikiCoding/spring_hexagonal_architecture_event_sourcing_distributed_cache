@@ -1,4 +1,4 @@
-package com.wikicoding.core.domainevents;
+package com.wikicoding.core.domain.events;
 
 import java.time.LocalDateTime;
 

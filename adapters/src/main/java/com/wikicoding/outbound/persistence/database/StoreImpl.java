@@ -1,7 +1,7 @@
 package com.wikicoding.outbound.persistence.database;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wikicoding.core.domainevents.BaseDomainEvent;
+import com.wikicoding.core.domain.events.BaseDomainEvent;
 import com.wikicoding.core.ports.outbound.EventStoreRepository;
 import com.wikicoding.inbound.rest.exceptions.ConcurrencyException;
 import com.wikicoding.inbound.rest.exceptions.NotFoundException;

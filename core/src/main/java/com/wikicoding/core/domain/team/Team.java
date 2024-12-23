@@ -2,8 +2,8 @@ package com.wikicoding.core.domain.team;
 
 import com.wikicoding.common.commands.CreateTeamCommand;
 import com.wikicoding.core.domain.abstractions.AggregateRoot;
-import com.wikicoding.core.domainevents.BaseDomainEvent;
-import com.wikicoding.core.domainevents.TeamCreatedEvent;
+import com.wikicoding.core.domain.events.BaseDomainEvent;
+import com.wikicoding.core.domain.events.TeamCreatedEvent;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
