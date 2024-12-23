@@ -1,7 +1,11 @@
 package com.wikicoding.outbound.persistence.database;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wikicoding.core.domainevents.BaseDomainEvent;
 import com.wikicoding.core.ports.outbound.EventStoreRepository;
+import com.wikicoding.inbound.rest.exceptions.ConcurrencyException;
+import com.wikicoding.inbound.rest.exceptions.NotFoundException;
+import com.wikicoding.outbound.messaging.KafkaProducer;
 import com.wikicoding.outbound.persistence.cache.CacheService;
 import com.wikicoding.outbound.persistence.datamodels.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -19,6 +24,9 @@ public class StoreImpl implements EventStoreRepository {
     private final CacheService cacheService;
     private final EventStore eventStore;
     private final Logger logger = LoggerFactory.getLogger(StoreImpl.class);
+    private final String topic = "hexagonal-architecture-topic";
+    private final KafkaProducer kafkaProducer;
+    private final ObjectMapper objectMapper;
 
     @Override
     public List<BaseDomainEvent> findByAggregateId(String aggregateId, String eventType) {
@@ -27,6 +35,13 @@ public class StoreImpl implements EventStoreRepository {
         if (events.isEmpty()) {
             long startTime = System.currentTimeMillis();
             events = eventStore.findByAggregateId(aggregateId);
+
+            if (events.isEmpty()) {
+                logger.error("No events found for aggregateId {}", aggregateId);
+                long endTime = System.currentTimeMillis();
+                logger.info("findByAggregateId: No events found - Retrieved data in {} ms", (endTime - startTime));
+                throw new NotFoundException("No events found for aggregateId: " + aggregateId);
+            }
 
             cacheService.saveToCache(events, eventType);
     
@@ -53,7 +68,7 @@ public class StoreImpl implements EventStoreRepository {
         if (!stream.isEmpty() && stream.get(stream.size() - 1).getVersion() >= expectedVersion) {
             logger.error("saveEvents: Expected version was {} and the latest version on the aggregate was {}",
                     expectedVersion, stream.get(stream.size() - 1).getVersion());
-            throw new RuntimeException("Concurrency Exception");
+            throw new ConcurrencyException("Concurrency Exception");
         }
 
         handleDomainEvents(events, expectedVersion);
@@ -77,7 +92,19 @@ public class StoreImpl implements EventStoreRepository {
             logger.info("saveEvents: Saved Event with eventId {}", event.getEventId());
 
             // we can produce messages here
+            produceMessageToKafka(event, eventDataModel);
+        }
+    }
+
+    private void produceMessageToKafka(BaseDomainEvent event, EventDataModel eventDataModel) {
+        try {
+            String message = objectMapper.writeValueAsString(eventDataModel);
             logger.info("saveEvents: Publishing event {}", event.getEventId());
+            kafkaProducer.sendMessage(topic, message);
+        } catch (IOException e) {
+            logger.error("saveEvents: Failed to publish event {} due to {}", event.getEventId(), e.getMessage());
+            // rollback transaction or instead make use of the outbox pattern to make sure
+            // that data is store and messages are produced as well
         }
     }
 }

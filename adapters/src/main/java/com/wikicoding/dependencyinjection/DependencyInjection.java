@@ -1,5 +1,7 @@
 package com.wikicoding.dependencyinjection;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.wikicoding.application.eventsourcinghandler.EventSourcingHandler;
 import com.wikicoding.application.usecases.match.CreateMatchEventHandler;
 import com.wikicoding.application.usecases.match.FindMatchByIdEventHandler;
@@ -9,6 +11,7 @@ import com.wikicoding.application.usecases.match.ResultMatchEventHandler;
 import com.wikicoding.core.domain.match.MatchFactory;
 import com.wikicoding.core.domain.team.TeamFactory;
 import com.wikicoding.core.ports.outbound.EventStoreRepository;
+import com.wikicoding.outbound.messaging.KafkaProducer;
 import com.wikicoding.outbound.persistence.cache.CacheService;
 import com.wikicoding.outbound.persistence.database.EventStore;
 import com.wikicoding.outbound.persistence.database.StoreImpl;
@@ -26,8 +29,16 @@ public class DependencyInjection {
     public TeamFactory teamFactory() { return new TeamFactory(); }
 
     @Bean
-    public EventStoreRepository eventStoreRepository(EventStore eventStore, CacheService cacheService) {
-        return new StoreImpl(cacheService, eventStore);
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
+    }
+
+    @Bean
+    public EventStoreRepository eventStoreRepository(EventStore eventStore, CacheService cacheService,
+                                                     KafkaProducer kafkaProducer, ObjectMapper objectMapper) {
+        return new StoreImpl(cacheService, eventStore, kafkaProducer, objectMapper);
     }
 
     @Bean
