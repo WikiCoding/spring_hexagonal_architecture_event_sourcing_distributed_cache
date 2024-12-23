@@ -27,6 +27,9 @@ I also implemented a **Kafka** Producer to send the created events to any intere
 ## General Structure / Idea
 ![img.png](img.png)
 
+## Testing the app
+You can spin up instances of the app and test them in swagger at **http://localhost:<port>/swagger-ui/index.html**
+
 ## To check data in redis-cli
 ```bash
 redis-cli
@@ -47,3 +50,5 @@ docker-compose up -d
 1. Hexagonal (Ports & Adapters) Architecture shows a very neat way to centralize business logic in the core module and to isolate this module to any external framework dependencies while providing nice interfaces which leaves you free to implement one or many frameworks, db's etc without touching any of the core logic.
 2. Applying Event Sourcing in this Architecture while it's possible it seems more complicated than doing it in CQRS but at the same time CQRS is only really CQRS when you have different apps for commands and queries, which is something I didn't want to do here.
 3. Redis as cache mechanism when you want to store Events is not the best solution, although I made it work.
+4. I'm using the same Sourcing Handlers and then also all the logic to store data for 2 different aggregates. These should be separated as this is a big source of bugs.
+5. Since I'm handling 2 aggregates at once, maybe it could be nice to abstractions that use reflection to determine types instead of a bunch of if statements like it's done.

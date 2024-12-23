@@ -2,6 +2,8 @@ package com.wikicoding.outbound.persistence.database;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wikicoding.core.domain.events.BaseDomainEvent;
+import com.wikicoding.core.domain.events.MatchCreatedEvent;
+import com.wikicoding.core.domain.events.TeamCreatedEvent;
 import com.wikicoding.core.ports.outbound.EventStoreRepository;
 import com.wikicoding.inbound.rest.exceptions.ConcurrencyException;
 import com.wikicoding.inbound.rest.exceptions.NotFoundException;
@@ -36,12 +38,7 @@ public class StoreImpl implements EventStoreRepository {
             long startTime = System.currentTimeMillis();
             events = eventStore.findByAggregateId(aggregateId);
 
-            if (events.isEmpty()) {
-                logger.error("No events found for aggregateId {}", aggregateId);
-                long endTime = System.currentTimeMillis();
-                logger.info("findByAggregateId: No events found - Retrieved data in {} ms", (endTime - startTime));
-                throw new NotFoundException("No events found for aggregateId: " + aggregateId);
-            }
+            eventsFoundValidation(aggregateId, eventType, events, startTime);
 
             cacheService.saveToCache(events, eventType);
     
@@ -105,6 +102,29 @@ public class StoreImpl implements EventStoreRepository {
             logger.error("saveEvents: Failed to publish event {} due to {}", event.getEventId(), e.getMessage());
             // rollback transaction or instead make use of the outbox pattern to make sure
             // that data is store and messages are produced as well
+        }
+    }
+
+    private void eventsFoundValidation(String aggregateId, String eventType, List<EventDataModel> events, long startTime) {
+        if (events.isEmpty()) {
+            logger.error("No events found for aggregateId {}", aggregateId);
+            long endTime = System.currentTimeMillis();
+            logger.info("findByAggregateId: No events found - Retrieved data in {} ms", (endTime - startTime));
+            throw new NotFoundException("No events found for aggregateId: " + aggregateId);
+        }
+
+        if (events.get(0).getBaseDomainEvent() instanceof TeamCreatedEvent && eventType.equals("MATCH")) {
+            logger.error("Events found for aggregateId {} but not match ones", aggregateId);
+            long endTime = System.currentTimeMillis();
+            logger.info("findByAggregateId: No events found for match - Retrieved data in {} ms", (endTime - startTime));
+            throw new NotFoundException("No match events found for aggregateId: " + aggregateId);
+        }
+
+        if (events.get(0).getBaseDomainEvent() instanceof MatchCreatedEvent && eventType.equals("TEAM")) {
+            logger.error("Events found for aggregateId {} but not team ones", aggregateId);
+            long endTime = System.currentTimeMillis();
+            logger.info("findByAggregateId: No events found for team - Retrieved data in {} ms", (endTime - startTime));
+            throw new NotFoundException("No team events found for aggregateId: " + aggregateId);
         }
     }
 }
