@@ -6,6 +6,8 @@ import com.wikicoding.application.eventsourcinghandler.EventSourcingHandler;
 import com.wikicoding.application.usecases.match.CreateMatchEventHandler;
 import com.wikicoding.application.usecases.match.FindMatchByIdEventHandler;
 import com.wikicoding.application.usecases.team.CreateTeamEventHandler;
+import com.wikicoding.application.usecases.team.FindAllMatchesEventHandler;
+import com.wikicoding.application.usecases.team.FindAllTeamsEventHandler;
 import com.wikicoding.application.usecases.team.FindTeamByIdEventHandler;
 import com.wikicoding.application.usecases.match.ResultMatchEventHandler;
 import com.wikicoding.core.domain.match.MatchFactory;
@@ -72,5 +74,15 @@ public class DependencyInjection {
     @Bean
     public FindMatchByIdEventHandler findMatchByIdEventHandler(EventSourcingHandler eventSourcingHandler) {
         return new FindMatchByIdEventHandler(eventSourcingHandler);
+    }
+
+    @Bean
+    public FindAllTeamsEventHandler findAllTeamsEventHandler(EventSourcingHandler eventSourcingHandler) {
+        return new FindAllTeamsEventHandler(eventSourcingHandler);
+    }
+
+    @Bean
+    public FindAllMatchesEventHandler findAllMatchesEventHandler(EventSourcingHandler eventSourcingHandler) {
+        return new FindAllMatchesEventHandler(eventSourcingHandler);
     }
 }

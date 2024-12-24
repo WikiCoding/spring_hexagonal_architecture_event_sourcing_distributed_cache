@@ -3,6 +3,7 @@ package com.wikicoding.outbound.persistence.database;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wikicoding.core.domain.events.BaseDomainEvent;
 import com.wikicoding.core.domain.events.MatchCreatedEvent;
+import com.wikicoding.core.domain.events.MatchResultedEvent;
 import com.wikicoding.core.domain.events.TeamCreatedEvent;
 import com.wikicoding.core.ports.outbound.EventStoreRepository;
 import com.wikicoding.inbound.rest.exceptions.ConcurrencyException;
@@ -69,6 +70,23 @@ public class StoreImpl implements EventStoreRepository {
         }
 
         handleDomainEvents(events, expectedVersion);
+    }
+
+    @Override
+    public List<BaseDomainEvent> findAll(String eventType) {
+        List<EventDataModel> allEvents = eventStore.findAll();
+
+        List<EventDataModel> events = allEvents.stream().filter(eventDataModel -> {
+            BaseDomainEvent baseDomainEvent = eventDataModel.getBaseDomainEvent();
+            if (eventType.equals("TEAM")) return baseDomainEvent instanceof TeamCreatedEvent;
+            else return baseDomainEvent instanceof MatchCreatedEvent && eventType.equals("MATCH")
+                    || baseDomainEvent instanceof MatchResultedEvent && eventType.equals("MATCH");
+        }).toList();
+
+        List<BaseDomainEvent> foundEvents = new ArrayList<>();
+        events.forEach(eventDataModel -> foundEvents.add(eventDataModel.getBaseDomainEvent()));
+
+        return foundEvents;
     }
 
     private void handleDomainEvents(List<BaseDomainEvent> events, int expectedVersion) {

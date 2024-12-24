@@ -1,11 +1,13 @@
 package com.wikicoding.inbound.rest;
 
 import com.wikicoding.application.usecases.match.FindMatchByIdEventHandler;
+import com.wikicoding.application.usecases.team.FindAllMatchesEventHandler;
 import com.wikicoding.common.commands.CreateMatchCommand;
 import com.wikicoding.common.commands.ResultMatchCommand;
 import com.wikicoding.common.dtos.MatchDto;
 import com.wikicoding.application.usecases.match.CreateMatchEventHandler;
 import com.wikicoding.application.usecases.match.ResultMatchEventHandler;
+import com.wikicoding.common.queries.FindAllMatchesQuery;
 import com.wikicoding.common.queries.FindMatchByIdQuery;
 import com.wikicoding.inbound.rest.dtos.CreateMatchRequest;
 import com.wikicoding.inbound.rest.dtos.MatchResponse;
@@ -18,6 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/matches")
 @AllArgsConstructor
@@ -26,6 +31,7 @@ public class MatchesController {
     private final CreateMatchEventHandler createMatchEventHandler;
     private final ResultMatchEventHandler resultMatchEventHandler;
     private final FindMatchByIdEventHandler findMatchByIdEventHandler;
+    private final FindAllMatchesEventHandler findAllMatchesEventHandler;
     private final Logger logger = LoggerFactory.getLogger(MatchesController.class);
 
     @PostMapping
@@ -63,6 +69,20 @@ public class MatchesController {
                 matchDto.getTeamB(), matchDto.getMatchScore(), matchDto.getCreatedAt(), matchDto.getVersion());
 
         return ResponseEntity.ok(matchResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MatchResponse>> findAllMatches() {
+        FindAllMatchesQuery findAllMatchesQuery = new FindAllMatchesQuery();
+
+        List<MatchDto> matchDtos = findAllMatchesEventHandler.handle(findAllMatchesQuery);
+        List<MatchResponse> matchResponses = new ArrayList<>();
+        matchDtos.forEach(matchDto ->
+                matchResponses.add(new MatchResponse(matchDto.getMatchId(), matchDto.getMatchName(),
+                matchDto.getTeamA(), matchDto.getTeamB(), matchDto.getMatchScore(), matchDto.getCreatedAt(),
+                        matchDto.getVersion())));
+
+        return ResponseEntity.ok(matchResponses);
     }
 
     private void validateResultMatchRequest(String matchId, String matchScore) {
