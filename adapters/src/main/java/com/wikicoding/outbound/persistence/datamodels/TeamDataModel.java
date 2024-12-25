@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
 
-@RedisHash("team")
+@RedisHash(value = "team", timeToLive = 60L)
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
