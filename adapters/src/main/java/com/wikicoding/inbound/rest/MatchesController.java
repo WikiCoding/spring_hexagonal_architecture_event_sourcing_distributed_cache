@@ -73,6 +73,7 @@ public class MatchesController {
 
     @GetMapping
     public ResponseEntity<List<MatchResponse>> findAllMatches() {
+        long startTime = System.currentTimeMillis();
         FindAllMatchesQuery findAllMatchesQuery = new FindAllMatchesQuery();
 
         List<MatchDto> matchDtos = findAllMatchesEventHandler.handle(findAllMatchesQuery);
@@ -81,6 +82,9 @@ public class MatchesController {
                 matchResponses.add(new MatchResponse(matchDto.getMatchId(), matchDto.getMatchName(),
                 matchDto.getTeamA(), matchDto.getTeamB(), matchDto.getMatchScore(), matchDto.getCreatedAt(),
                         matchDto.getVersion())));
+
+        long endTime = System.currentTimeMillis();
+        logger.info("Request to find all matches took {} ms", (endTime - startTime));
 
         return ResponseEntity.ok(matchResponses);
     }

@@ -53,3 +53,4 @@ docker-compose up -d
 4. I'm using the same Sourcing Handlers and then also all the logic to store data for 2 different aggregates. These should be separated as this is a big source of bugs.
 5. Since I'm handling 2 aggregates at once, maybe it could be nice to abstractions that use reflection to determine types instead of a bunch of if statements like it's done.
 6. When using Event Sourcing, and we store and access just events, getting a list of all events from a given aggregate comes natural, but when you need to fetch all aggregates events it comes with additional logic and computation overhead.
+7. According to this experiment and other study, using Redis for cache it's useful only if you want to reduce the number of requests sent to the database instance and/or you need to access the same data with high frequency from several different clients. Otherwise, requests to the database with available connections most likely will be faster.
